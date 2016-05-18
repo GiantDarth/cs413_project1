@@ -1,0 +1,23 @@
+{
+  "name": "cs413_project1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaos7theory/cs413_project1.git"
+  },
+  "author": "Christopher Robert Philabaum",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/chaos7theory/cs413_project1/issues"
+  },
+  "homepage": "https://dana.ucc.nau.edu/cp723/cs413/project1/",
+  "devDependencies": {
+    "lite-server": "^2.2.0"
+  }
+}
