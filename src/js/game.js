@@ -7,13 +7,14 @@
         const PIXEL_SIZE = 32;
 
         var gameport = document.getElementById("gameport");
-        // Shortened from #3344ee
+        // Shortened from #000000
         var renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT, { backgroundColor: 0x000 });
         gameport.appendChild(renderer.view);
 
         var stage = new PIXI.Container();
         var ball = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bowl_ball.png'));
         var pins = new Array();
+        // Used to not reuse/reload the same image.
         const PIN_IMG = PIXI.Texture.fromImage('assets/pin.png');
         for(let i = 0; i < 10; i++) {
             pins.push(new PIXI.Sprite(PIN_IMG));
@@ -26,15 +27,35 @@
         ball.position.y = HEIGHT - PIXEL_SIZE;
         stage.addChild(ball);
 
-        for(let p = 0, row = 0; p < pins.length; p++) {
+        // Use to position the pins collectively.
+        var pinsContainer = new PIXI.Container();
+        // Get the count of rows.
+        const ROWS = getNumOfRows(pins.length);
+        for(let p = 0, pos = 0, row = 0; p < pins.length; p++) {
             pins[p].anchor.x = 0.5;
             pins[p].anchor.y = 0.5;
 
-            pins[p].position.x = WIDTH / 2;
-            pins[p].position.y = (p + 1) * PIXEL_SIZE;
+            // Add pins starting from left-to-right
+            pins[p].position.x = (pos - row / 2) * PIXEL_SIZE;
+            // Reverse the y position based on row facing the ball,
+            // so that the first pin is bottom.
+            pins[p].position.y = (ROWS - row) * PIXEL_SIZE;
 
-            stage.addChild(pins[p]);
+            pinsContainer.addChild(pins[p]);
+
+            if(isLastOfRow(pos, row)) {
+                row++;
+                pos = 0;
+            }
+            else {
+                pos++;
+            }
         }
+
+        pinsContainer.position.x = WIDTH / 2;
+        pinsContainer.position.y = 0;
+
+        stage.addChild(pinsContainer);
 
         // Self-execute animate
         (function animate() {
@@ -44,7 +65,23 @@
         })();
     });
 
-    function isLastOfRow(pin, row) {
-        return pin === row;
+    function isLastOfRow(pos, row) {
+        return pos === row;
+    }
+
+    function getNumOfRows(numOfPins) {
+        var row = 0;
+        for(let n = 0, pos = 0; n < numOfPins; n++) {
+            // Reset position and increment row num.
+            if(isLastOfRow(pos, row)) {
+                row++;
+                pos = 0;
+            }
+            else {
+                pos++;
+            }
+        }
+
+        return row;
     }
 })();
