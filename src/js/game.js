@@ -1,4 +1,4 @@
-// Use self-closing anonymous function (using arrow-notation) to avoid flooding 'namespace'
+// Use self-closing anonymous function (using arrow-notation) to avoid flooding the 'namespace'
 (() => {
     // Only run when the document is fully loaded.
     document.addEventListener("DOMContentLoaded", (event) => {
@@ -23,6 +23,7 @@
 
         stage.addChild(sprite);
 
+        // Self-execute animate
         (function animate() {
             requestAnimationFrame(animate);
             sprite.rotation += 0.1;
