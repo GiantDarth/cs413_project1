@@ -5,6 +5,7 @@
         const WIDTH = 400;
         const HEIGHT = 400;
         const PIXEL_SIZE = 32;
+        const VELOCITY_FACTOR = 0.05;
 
         var gameport = document.getElementById("gameport");
         // Shortened from #000000
@@ -41,6 +42,14 @@
             // so that the first pin is bottom.
             pins[p].position.y = (ROWS - row) * PIXEL_SIZE;
 
+            pins[p].collided = false;
+            pins[p].on('collided', (ball, pin, index) => {
+                if(!pin.collided) {
+                    console.log("Pin", index);
+                }
+                pin.collided = true;
+            });
+
             pinsContainer.addChild(pins[p]);
 
             if(isLastOfRow(pos, row)) {
@@ -57,10 +66,63 @@
 
         stage.addChild(pinsContainer);
 
+        ball.interactive = true;
+        // Used to
+        ball.released = true;
+        ball.velocity = { x: 0, y: 0 };
+
+        ball.on('mousedown', (e) => {
+            ball.released = false;
+        });
+
+        ball.on('mousemove', (e) => {
+            if(!ball.released) {
+                // Rotate the ball based on the mouse position relative to the ball position, and compensate with an extra 90 degrees to the left.
+                ball.rotation = Math.atan2(e.data.global.y - ball.position.y, e.data.global.x - ball.position.x) - Math.PI / 2;
+            }
+        });
+
+        ball.on('mouseupoutside', (e) => {
+            if(!ball.released) {
+                ball.velocity = { x: (ball.position.x - e.data.global.x) * VELOCITY_FACTOR,
+                    y: (ball.position.y - e.data.global.y) * VELOCITY_FACTOR}
+            }
+            ball.released = true;
+        });
+
+        function resetBall(ball) {
+            ball.velocity = {x: 0, y: 0};
+            ball.position.x = WIDTH / 2;
+            ball.position.y = HEIGHT - PIXEL_SIZE;
+            ball.rotation = 0;
+        }
+
+        function checkCollision(ball, pin) {
+            return ball.position.x - pin.position.x - PIXEL_SIZE / 2 < 0 || ball.position.y - pin.position.y - PIXEL_SIZE / 2< 0;
+        }
+
         // Self-execute animate
         (function animate() {
             requestAnimationFrame(animate);
-            ball.rotation += 0.1;
+            if(ball.velocity.x || ball.velocity.y) {
+                ball.rotation += 0.2;
+                ball.position.x += ball.velocity.x;
+                ball.position.y += ball.velocity.y;
+
+                pins.forEach((pin, index) => {
+                    if(checkCollision(ball, pin)) {
+                        pin.emit('collided', ball, pin, index);
+                    }
+                });
+
+                for(let p = 0; p < pins.length; p++) {
+
+                }
+
+                if(ball.position.x < 0 || ball.position.x > WIDTH || ball.position.y < 0 || ball.position.y > HEIGHT) {
+                    resetBall(ball);
+                }
+            }
             renderer.render(stage);
         })();
     });
