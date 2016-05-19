@@ -1,3 +1,4 @@
+// Copyright (c) 2016 Christopher Robert Philabaum
 // Use self-closing anonymous function (using arrow-notation) to avoid flooding the 'namespace'
 (() => {
     // Only run when the document is fully loaded.
@@ -5,6 +6,8 @@
         const WIDTH = 400;
         const HEIGHT = 400;
         const PIXEL_SIZE = 32;
+        // Multiplier on the difference between the ball mouse
+        // Affects how fast/slow the ball is shot
         const VELOCITY_FACTOR = 0.05;
         let strikes = 0;
 
@@ -14,11 +17,14 @@
         gameport.appendChild(renderer.view);
 
         var stage = new PIXI.Container();
+        // Scoreboard text.
         var scoreBoard = new PIXI.Text(strikes, {fill: 'white'});
+        // Anchor on the top-right
         scoreBoard.anchor.x = 1;
         scoreBoard.anchor.y = 0;
         scoreBoard.position.x = WIDTH - 40;
         scoreBoard.position.y = 10;
+
         stage.addChild(scoreBoard);
 
         var ball = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bowl_ball.png'));
@@ -124,13 +130,15 @@
         }
 
         function checkCollision(ball, pin) {
-            return Math.abs(ball.position.x - (pin.position.x + pinsContainer.x)) - PIXEL_SIZE < 0
-            && Math.abs(ball.position.y - (pin.position.y + pinsContainer.y)) - PIXEL_SIZE < 0;
+            // Collided only if the absolute of the distances in both axes are less than their bitmaps.
+            return Math.abs(ball.position.x - (pin.position.x + pinsContainer.x)) < PIXEL_SIZE
+            && Math.abs(ball.position.y - (pin.position.y + pinsContainer.y)) < PIXEL_SIZE;
         }
 
         // Self-execute animate
         (function animate() {
             requestAnimationFrame(animate);
+            // If either velocity vector component is non-zero
             if(ball.velocity.x || ball.velocity.y) {
                 ball.rotation += 0.2;
                 ball.position.x += ball.velocity.x;
@@ -140,17 +148,20 @@
                     if(checkCollision(ball, pin)) {
                         pin.emit('collided', ball, pin, index);
                     }
+
+                    // Hide the pin if collided.
                     if(pin.collided) {
                         pin.visible = false;
                     }
                 });
 
+                // If every pin is collided, then reset the game layout.
                 if(pins.every(pin => pin.collided)) {
-                    resetGame()
+                    resetGame();
                 }
 
                 if(ball.position.x < 0 || ball.position.x > WIDTH || ball.position.y < 0 || ball.position.y > HEIGHT) {
-                    resetBall(ball);
+                    resetBall();
                 }
             }
             renderer.render(stage);
