@@ -6,6 +6,7 @@
         const HEIGHT = 400;
         const PIXEL_SIZE = 32;
         const VELOCITY_FACTOR = 0.05;
+        let strikes = 0;
 
         var gameport = document.getElementById("gameport");
         // Shortened from #000000
@@ -13,6 +14,13 @@
         gameport.appendChild(renderer.view);
 
         var stage = new PIXI.Container();
+        var scoreBoard = new PIXI.Text(strikes, {fill: 'white'});
+        scoreBoard.anchor.x = 1;
+        scoreBoard.anchor.y = 0;
+        scoreBoard.position.x = WIDTH - 40;
+        scoreBoard.position.y = 10;
+        stage.addChild(scoreBoard);
+
         var ball = new PIXI.Sprite(PIXI.Texture.fromImage('assets/bowl_ball.png'));
         var pins = new Array();
         // Used to not reuse/reload the same image.
@@ -26,6 +34,11 @@
         // Center sprite on screen.
         ball.position.x = WIDTH / 2;
         ball.position.y = HEIGHT - PIXEL_SIZE;
+
+        // Custom states
+        ball.released = true;
+        ball.velocity = { x: 0, y: 0 };
+
         stage.addChild(ball);
 
         // Use to position the pins collectively.
@@ -42,7 +55,9 @@
             // so that the first pin is bottom.
             pins[p].position.y = (ROWS - row) * PIXEL_SIZE;
 
+            // Custom collided state.
             pins[p].collided = false;
+            // Set custom collided event.
             pins[p].on('collided', (ball, pin, index) => {
                 if(!pin.collided) {
                     console.log("Pin", index);
@@ -67,9 +82,6 @@
         stage.addChild(pinsContainer);
 
         ball.interactive = true;
-        // Used to
-        ball.released = true;
-        ball.velocity = { x: 0, y: 0 };
 
         ball.on('mousedown', (e) => {
             ball.released = false;
@@ -90,15 +102,30 @@
             ball.released = true;
         });
 
-        function resetBall(ball) {
+        function resetBall() {
             ball.velocity = {x: 0, y: 0};
             ball.position.x = WIDTH / 2;
             ball.position.y = HEIGHT - PIXEL_SIZE;
             ball.rotation = 0;
         }
 
+        function resetPins() {
+            pins.forEach(pin => {
+                pin.visible = true;
+                pin.collided = false;
+            });
+        }
+
+        function resetGame() {
+            resetPins();
+            resetBall();
+            strikes++;
+            scoreBoard.text = strikes;
+        }
+
         function checkCollision(ball, pin) {
-            return ball.position.x - pin.position.x - PIXEL_SIZE / 2 < 0 || ball.position.y - pin.position.y - PIXEL_SIZE / 2< 0;
+            return Math.abs(ball.position.x - (pin.position.x + pinsContainer.x)) - PIXEL_SIZE < 0
+            && Math.abs(ball.position.y - (pin.position.y + pinsContainer.y)) - PIXEL_SIZE < 0;
         }
 
         // Self-execute animate
@@ -113,10 +140,13 @@
                     if(checkCollision(ball, pin)) {
                         pin.emit('collided', ball, pin, index);
                     }
+                    if(pin.collided) {
+                        pin.visible = false;
+                    }
                 });
 
-                for(let p = 0; p < pins.length; p++) {
-
+                if(pins.every(pin => pin.collided)) {
+                    resetGame()
                 }
 
                 if(ball.position.x < 0 || ball.position.x > WIDTH || ball.position.y < 0 || ball.position.y > HEIGHT) {

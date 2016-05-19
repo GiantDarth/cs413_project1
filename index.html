@@ -2,21 +2,21 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>cp723: Project 1 - 3 Strikes</title>
+        <title>cp723: Project 1 - Bowling</title>
         <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
             integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
     </head>
 
     <body>
         <main class="container">
-            <h1>3 Strikes (WIP)</h1>
+            <h1>Bowling</h1>
             <p>This game utilizes ES2015 features, and requires at least Firefox 21, Chrome 45, or Microsoft Edge. Not tested on Safari and does not support IE.</p>
             <div id="gameport"></div>
 
             <h2 class="h1">Instructions</h2>
             <p>
                 Click and hold on the bowling ball. Dragging in the opposite direction you want it to go and pull back for a faster shot.
-                Try to get three strikes by knocking down all the pins!
+                Each set of 10 pins knocked down gives you a point!
             </p>
 
             <div style="margin-top: 200px;">
@@ -29,7 +29,7 @@
         <script>
             (function() {
             var d = document, s = d.createElement('script');
-            s.src = 'http://nau-cs413.disqus.com/embed.js';
+            s.src = 'https://nau-cs413.disqus.com/embed.js';
             s.setAttribute('data-timestamp', +new Date());
             (d.head || d.body).appendChild(s);
             })();
