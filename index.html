@@ -3,27 +3,32 @@
     <head>
         <meta charset="utf-8" />
         <title>cp723: Project 1 - Bowling</title>
-        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-            integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+            integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     </head>
 
     <body>
         <main class="container">
-            <h1>Bowling</h1>
-            <p>This game utilizes ES2015 features, and requires at least Firefox 21, Chrome 45, or Microsoft Edge. Not tested on Safari and does not support IE.</p>
-            <div id="gameport"></div>
+            <div class="well" style="margin-top: 20px;">
+                <h1 class="text-center">Bowling</h1>
+                <p class="bg-warning" style="padding: 16px; font-size: 16px;">
+                    This game utilizes ES2015 features, and requires at least
+                    Firefox 21, Chrome 45, or Microsoft Edge. Not tested on Safari and not supported on IE.</p>
+                <div class="text-center" id="gameport"></div>
 
-            <h2 class="h1">Instructions</h2>
-            <p>
-                Click and hold on the bowling ball. Dragging in the opposite direction you want it to go and pull back for a faster shot.
-                Each set of 10 pins knocked down gives you a point!
-            </p>
 
-            <div style="margin-top: 200px;">
+                <h2 class="h1">Instructions</h2>
+                <p class="bg-info" style="padding: 16px; font-size: 16px;">
+                    Click and hold on the bowling ball. Dragging in the opposite direction you want it to go and pull back for a faster shot.
+                    Each set of 10 pins knocked down gives you a point!
+                </p>
+            </div>
+
+
+            <div style="margin-top: 80px;">
                 <h2 class="h1">Comments</h2>
                 <div id="disqus_thread"></div>
             </div>
-
         </main>
 
         <script>
